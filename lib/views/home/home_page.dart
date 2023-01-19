@@ -17,8 +17,37 @@ class _HomePageState extends State<HomePage> {
       client: widget.clientNotifier,
       child: Scaffold(
         appBar: AppBar(),
-        body: Container(),
+        body: Query(
+          options: QueryOptions(
+            document: gql(readRepositories),
+          ),
+          builder: (
+            QueryResult result, {
+            VoidCallback? refetch,
+            FetchMore? fetchMore,
+          }) {
+            if (result.data == null) {
+              return const Center(
+                child: Text("Deu ruim"),
+              );
+            }
+            return ListView.builder(
+              itemBuilder: (BuildContext context, index) => Text(
+                result.data!['users'][index]['fullName'],
+              ),
+              itemCount: result.data!['users'].length,
+            );
+          },
+        ),
       ),
     );
   }
 }
+
+String readRepositories = """
+  query{
+  users {
+    _id, fullName
+  }
+}
+""";
