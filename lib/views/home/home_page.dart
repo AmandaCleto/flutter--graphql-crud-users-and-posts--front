@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/views/home/home_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,7 +13,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with HomeMixin {
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
@@ -26,9 +29,10 @@ class _HomePageState extends State<HomePage> {
             VoidCallback? refetch,
             FetchMore? fetchMore,
           }) {
+            inspect(result);
             if (result.data == null) {
               return const Center(
-                child: Text("Deu ruim"),
+                child: Text("Deu bad"),
               );
             }
             return ListView.builder(
@@ -39,6 +43,9 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ),
+        floatingActionButton: FloatingActionButton(onPressed: () {
+          createUser(client: widget.clientNotifier);
+        }),
       ),
     );
   }
@@ -46,8 +53,8 @@ class _HomePageState extends State<HomePage> {
 
 String readRepositories = """
   query{
-  users {
-    _id, fullName
+  users{
+    fullName
   }
 }
 """;
