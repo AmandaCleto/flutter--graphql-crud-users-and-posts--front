@@ -19,7 +19,9 @@ class _HomePageState extends State<HomePage> with HomeMixin {
     return GraphQLProvider(
       client: widget.clientNotifier,
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: const Text('CRUD com GraphQL'),
+        ),
         body: Query(
           options: QueryOptions(
             document: gql(readRepositories),
@@ -35,11 +37,25 @@ class _HomePageState extends State<HomePage> with HomeMixin {
                 child: Text("Deu bad"),
               );
             }
-            return ListView.builder(
-              itemBuilder: (BuildContext context, index) => Text(
-                result.data!['users'][index]['fullName'],
+            return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView.builder(
+                itemBuilder: (BuildContext context, index) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      index == 0
+                          ? const Text('Lista de Usuários')
+                          : const SizedBox.shrink(),
+                      Text(
+                        result.data!['users'][index]['fullName'],
+                      ),
+                    ],
+                  );
+                },
+                itemCount: result.data!['users'].length,
               ),
-              itemCount: result.data!['users'].length,
             );
           },
         ),
