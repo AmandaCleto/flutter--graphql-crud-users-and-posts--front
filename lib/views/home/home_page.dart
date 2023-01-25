@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> with HomeMixin {
           title: const Text('POSTS'),
           actions: [
             IconButton(
+              padding: const EdgeInsets.all(20.0),
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               icon: const Icon(Icons.settings),

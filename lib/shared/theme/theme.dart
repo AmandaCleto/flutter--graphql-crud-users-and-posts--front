@@ -13,7 +13,7 @@ class AppTheme {
       scaffoldBackgroundColor: ColorsTheme.secondary,
       appBarTheme: const AppBarTheme(
         backgroundColor: ColorsTheme.primary,
-        toolbarHeight: 95.0,
+        toolbarHeight: 90.0,
         centerTitle: true,
         titleTextStyle: TextStyle(
           fontSize: FontSizes.title,
