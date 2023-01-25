@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/shared/graphql/config_graphql.dart';
+import 'package:graphql_crud_users/shared/theme/theme.dart';
 import 'package:graphql_crud_users/views/home/home_page.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -28,9 +29,7 @@ class _AppState extends State<App> {
     return MaterialApp(
       title: 'GraphQL Users Crud',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-      ),
+      theme: AppTheme.lightTheme,
       home: HomePage(
         clientNotifier: clientNotifier!,
       ),
