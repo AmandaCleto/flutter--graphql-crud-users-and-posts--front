@@ -22,6 +22,7 @@ class AppTheme {
           color: ColorsTheme.white,
         ),
       ),
+      iconTheme: const IconThemeData(color: ColorsTheme.white, size: 24.0),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorsTheme.primary,
@@ -38,7 +39,6 @@ class AppTheme {
               ),
         ),
       ),
-      textTheme: const TextTheme(),
     );
   }
 }

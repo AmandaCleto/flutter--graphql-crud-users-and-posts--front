@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/shared/theme/colors.dart';
+import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
+import 'package:graphql_crud_users/shared/theme/gradient_decoration.dart';
 import 'package:graphql_crud_users/views/home/home_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -20,7 +23,17 @@ class _HomePageState extends State<HomePage> with HomeMixin {
       client: widget.clientNotifier,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('CRUD com GraphQL'),
+          title: const Text('POSTS'),
+          actions: [
+            IconButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                // do something
+              },
+            )
+          ],
         ),
         body: Query(
           options: QueryOptions(
@@ -31,7 +44,7 @@ class _HomePageState extends State<HomePage> with HomeMixin {
             VoidCallback? refetch,
             FetchMore? fetchMore,
           }) {
-            inspect(result);
+            // inspect(result);
             if (result.data == null) {
               return const Center(
                 child: Text("Deu bad"),
@@ -59,9 +72,35 @@ class _HomePageState extends State<HomePage> with HomeMixin {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(onPressed: () {
-          createUser(client: widget.clientNotifier);
-        }),
+        floatingActionButton: Container(
+          decoration: GradientDecoration.bluePinkGradientDecoration,
+          height: 60.0,
+          child: FloatingActionButton.extended(
+            backgroundColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            foregroundColor: Colors.transparent,
+            highlightElevation: 0,
+            hoverElevation: 0,
+            elevation: 0,
+            onPressed: () {
+              // createUser(client: widget.clientNotifier);
+            },
+            icon: const Icon(
+              Icons.border_color_rounded,
+              color: ColorsTheme.blue,
+            ),
+            label: const Text(
+              "write post",
+              style: TextStyle(
+                fontSize: FontSizes.small,
+                fontFamily: 'Roboto',
+                color: ColorsTheme.blue,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
