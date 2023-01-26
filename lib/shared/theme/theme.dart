@@ -16,7 +16,7 @@ class AppTheme {
         toolbarHeight: 90.0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          fontSize: FontSizes.title,
+          fontSize: FontSizesTheme.title,
           fontFamily: 'Roboto',
           fontWeight: FontWeight.bold,
           color: ColorsTheme.white,
@@ -34,7 +34,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(40.0),
           ),
           textStyle: const TextStyle(
-              // fontSize: AppFontSizes.subtitle,
+              // fontSize: AppFontSizesTheme.subtitle,
               // fontFamily: 'Quicksand-Bold',
               ),
         ),

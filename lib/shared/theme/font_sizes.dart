@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class FontSizes {
+class FontSizesTheme {
   static const extra = 24.0;
   static const title = 20.0;
   static const subtitle = 18.0;

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
@@ -7,16 +5,16 @@ import 'package:graphql_crud_users/shared/theme/gradient_decoration.dart';
 import 'package:graphql_crud_users/views/home/home_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-class HomePage extends StatefulWidget {
+class HomeView extends StatefulWidget {
   final ValueNotifier<GraphQLClient> clientNotifier;
 
-  const HomePage({super.key, required this.clientNotifier});
+  const HomeView({super.key, required this.clientNotifier});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomePageState extends State<HomePage> with HomeMixin {
+class _HomeViewState extends State<HomeView> with HomeMixin {
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
@@ -78,8 +76,8 @@ class _HomePageState extends State<HomePage> with HomeMixin {
           height: 60.0,
           child: FloatingActionButton.extended(
             backgroundColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            focusColor: Colors.transparent,
+            splashColor: Colors.black26,
+            focusColor: Colors.black26,
             hoverColor: Colors.transparent,
             foregroundColor: Colors.transparent,
             highlightElevation: 0,
@@ -95,7 +93,7 @@ class _HomePageState extends State<HomePage> with HomeMixin {
             label: const Text(
               "write post",
               style: TextStyle(
-                fontSize: FontSizes.small,
+                fontSize: FontSizesTheme.small,
                 fontFamily: 'Roboto',
                 color: ColorsTheme.blue,
               ),
