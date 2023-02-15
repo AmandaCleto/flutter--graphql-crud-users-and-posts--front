@@ -1,10 +1,11 @@
 class UserQuery {
-  String getUsersPosts() {
+  String get getUsersPosts {
     String query = """
     query {
       posts {
         title
         content
+        _id
         author {
           fullName,
         }

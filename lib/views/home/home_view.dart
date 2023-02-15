@@ -50,7 +50,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                   .map((jsonChat) => GetUsersPosts.fromJson(jsonChat))
                   .toList();
             },
-            document: gql(UserQuery().getUsersPosts()),
+            document: gql(UserQuery().getUsersPosts),
           ),
           builder: (
             QueryResult result, {
@@ -65,24 +65,30 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
               );
             } else {
               usersPosts = result.parsedData as List<GetUsersPosts>;
-              return Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ListView.builder(
-                  itemBuilder: (BuildContext context, index) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        PostWidget(
+              return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (BuildContext context, index) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (index == 0) const SizedBox(height: 20.0),
+                      // ElevatedButton(onPressed: refetch, child: Text("")),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: PostWidget(
                           title: usersPosts![index].title,
                           text: usersPosts![index].content,
                           author: usersPosts![index].authorFullName,
+                          postId: usersPosts![index].postId,
                         ),
-                      ],
-                    );
-                  },
-                  itemCount: usersPosts!.length,
-                ),
+                      ),
+                      if (index != usersPosts!.length)
+                        const SizedBox(height: 20.0),
+                    ],
+                  );
+                },
+                itemCount: usersPosts!.length,
               );
             }
           },
