@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:graphql_crud_users/data/models/users/get_users_posts.dart';
+import 'package:graphql_crud_users/data/queries/posts/post_mutation.dart';
 import 'package:graphql_crud_users/data/queries/users/user_query.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
@@ -73,7 +74,6 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (index == 0) const SizedBox(height: 20.0),
-                      // ElevatedButton(onPressed: refetch, child: Text("")),
                       Padding(
                         padding: const EdgeInsets.only(right: 20.0),
                         child: PostWidget(
@@ -81,6 +81,14 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                           text: usersPosts![index].content,
                           author: usersPosts![index].authorFullName,
                           postId: usersPosts![index].postId,
+                          callbackFn: () async {
+                            await deletePost(
+                              client: widget.clientNotifier,
+                              postId: usersPosts![index].postId,
+                            );
+
+                            refetch!();
+                          },
                         ),
                       ),
                       if (index != usersPosts!.length)

@@ -1,12 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/shared/components/alert_dialog_widget.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
 
+typedef FutureCallback = Future<void> Function();
+
 class PostWidget extends StatefulWidget {
   final String text, title, author, postId;
+  final FutureCallback callbackFn;
 
   const PostWidget({
     super.key,
@@ -14,6 +16,7 @@ class PostWidget extends StatefulWidget {
     required this.title,
     required this.author,
     required this.postId,
+    required this.callbackFn,
   });
 
   @override
@@ -34,11 +37,24 @@ class _PostWidgetState extends State<PostWidget> {
     return Dismissible(
       key: Key(widget.postId),
       onDismissed: (direction) {
-        // Remove the item from the data source.
+        widget.callbackFn();
 
-        // Then show a snackbar.
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('dismissed')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Post has been successfully deleted!'),
+        ));
+      },
+      confirmDismiss: (DismissDirection direction) async {
+        return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const AlertDialogWidget(
+              title: 'Are you sure?',
+              content: 'By deleting this post, you cannot undo this action.',
+              confirmationButtonText: "I'm sure!",
+              denialButtonText: "No",
+            );
+          },
+        );
       },
       direction: DismissDirection.endToStart,
       onUpdate: (dismissUpdateDetails) {

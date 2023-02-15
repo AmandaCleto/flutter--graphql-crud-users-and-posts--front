@@ -14,7 +14,7 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'GraphQL Users Crud',
+      title: 'GraphQL Users and Posts Crud',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       onGenerateRoute: RouteGenerator.generateRoute,

@@ -22,6 +22,13 @@ class AppTheme {
           color: ColorsTheme.white,
         ),
       ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: ColorsTheme.pinkLight,
+        contentTextStyle: TextStyle(
+          color: ColorsTheme.blueLight,
+          fontSize: FontSizesTheme.small,
+        ),
+      ),
       iconTheme: const IconThemeData(color: ColorsTheme.white, size: 24.0),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -33,10 +40,6 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40.0),
           ),
-          textStyle: const TextStyle(
-              // fontSize: AppFontSizesTheme.subtitle,
-              // fontFamily: 'Quicksand-Bold',
-              ),
         ),
       ),
     );
