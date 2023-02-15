@@ -1,12 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:graphql_crud_users/data/models/users/get_users_posts.dart';
-import 'package:graphql_crud_users/data/queries/posts/post_mutation.dart';
 import 'package:graphql_crud_users/data/queries/users/user_query.dart';
+import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
 import 'package:graphql_crud_users/shared/theme/gradient_decoration.dart';
 import 'package:graphql_crud_users/views/home/components/post_widget.dart';
+import 'package:graphql_crud_users/views/home/home_controller.dart';
 import 'package:graphql_crud_users/views/home/home_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -21,6 +24,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with HomeMixin {
   late List<GetUsersPosts>? usersPosts;
+  final homeController = HomeController();
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +55,13 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                   .map((jsonChat) => GetUsersPosts.fromJson(jsonChat))
                   .toList();
             },
+            onComplete: (Map<String, dynamic> json) {
+              if (json["posts"].isNotEmpty) {
+                homeController.turnHasDataOn();
+              } else {
+                homeController.turnHasDataOff();
+              }
+            },
             document: gql(UserQuery().getUsersPosts),
           ),
           builder: (
@@ -60,12 +71,107 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
           }) {
             if (result.isLoading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (result.hasException || result.data == null) {
-              return const Center(
-                child: Text("Deu bad"),
+            } else if (result.hasException) {
+              return Container(
+                width: context.screenWidth,
+                padding: EdgeInsets.only(top: context.percentHeight(0.25)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: const [
+                    Text(
+                      "Something went wrong :(",
+                      style: TextStyle(
+                        color: ColorsTheme.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: FontSizesTheme.subtitle,
+                      ),
+                    ),
+                    SizedBox(height: 40.0),
+                    Text(
+                      "Please verify your internet \n connection, and try it again.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: ColorsTheme.white,
+                        fontSize: FontSizesTheme.bodyText,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else if ((result.parsedData as List<GetUsersPosts>).isEmpty) {
+              return Container(
+                width: context.screenWidth,
+                padding: EdgeInsets.only(top: context.percentHeight(0.25)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const Text(
+                      "Oh no! There is no posts yet..",
+                      style: TextStyle(
+                        color: ColorsTheme.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: FontSizesTheme.subtitle,
+                      ),
+                    ),
+                    const SizedBox(height: 40.0),
+                    const Text(
+                      "How about creating one?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: ColorsTheme.white,
+                        fontSize: FontSizesTheme.bodyText,
+                      ),
+                    ),
+                    const SizedBox(height: 30.0),
+                    SizedBox(
+                      width: context.percentWidth(0.40),
+                      height: 60.0,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80.0),
+                          ),
+                          padding: const EdgeInsets.all(0.0),
+                        ),
+                        child: Ink(
+                          decoration: const BoxDecoration(
+                            gradient: GradientDecoration.bluePinkGradient,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(80.0)),
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.border_color_rounded,
+                                  color: ColorsTheme.blue,
+                                ),
+                                SizedBox(width: 10.0),
+                                Text(
+                                  'write post',
+                                  style: TextStyle(
+                                    fontSize: FontSizesTheme.bodyText,
+                                    color: ColorsTheme.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               );
             } else {
               usersPosts = result.parsedData as List<GetUsersPosts>;
+
               return ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (BuildContext context, index) {
@@ -101,34 +207,42 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
             }
           },
         ),
-        floatingActionButton: Container(
-          decoration: GradientDecoration.bluePinkGradientDecoration,
-          height: 60.0,
-          child: FloatingActionButton.extended(
-            backgroundColor: Colors.transparent,
-            splashColor: Colors.black26,
-            focusColor: Colors.black26,
-            hoverColor: Colors.transparent,
-            foregroundColor: Colors.transparent,
-            highlightElevation: 0,
-            hoverElevation: 0,
-            elevation: 0,
-            onPressed: () {
-              // createUser(client: widget.clientNotifier);
-            },
-            icon: const Icon(
-              Icons.border_color_rounded,
-              color: ColorsTheme.blue,
-            ),
-            label: const Text(
-              "write post",
-              style: TextStyle(
-                fontSize: FontSizesTheme.small,
-                fontFamily: 'Roboto',
-                color: ColorsTheme.blue,
+        floatingActionButton: ValueListenableBuilder<bool>(
+          valueListenable: homeController,
+          builder: (context, value, child) {
+            return Visibility(
+              visible: value,
+              child: Container(
+                decoration: GradientDecoration.bluePinkGradientDecoration,
+                height: 60.0,
+                child: FloatingActionButton.extended(
+                  backgroundColor: Colors.transparent,
+                  splashColor: Colors.black26,
+                  focusColor: Colors.black26,
+                  hoverColor: Colors.transparent,
+                  foregroundColor: Colors.transparent,
+                  highlightElevation: 0,
+                  hoverElevation: 0,
+                  elevation: 0,
+                  onPressed: () {
+                    createUser(client: widget.clientNotifier);
+                  },
+                  icon: const Icon(
+                    Icons.border_color_rounded,
+                    color: ColorsTheme.blue,
+                  ),
+                  label: const Text(
+                    "write post",
+                    style: TextStyle(
+                      fontSize: FontSizesTheme.small,
+                      fontFamily: 'Roboto',
+                      color: ColorsTheme.blue,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

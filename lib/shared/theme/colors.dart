@@ -9,6 +9,6 @@ class ColorsTheme {
   static const black = Color(0xFF202020);
 
   static const blue = Color(0xFF283543);
-  static const blueLight = Color(0xFF39CEFD);
+  static const blueLight = Color(0xFF7EFFEF);
   static const pinkLight = Color(0xFFF067B4);
 }

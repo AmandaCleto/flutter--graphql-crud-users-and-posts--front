@@ -23,9 +23,9 @@ class AppTheme {
         ),
       ),
       snackBarTheme: const SnackBarThemeData(
-        backgroundColor: ColorsTheme.pinkLight,
+        backgroundColor: ColorsTheme.blue,
         contentTextStyle: TextStyle(
-          color: ColorsTheme.blueLight,
+          color: ColorsTheme.white,
           fontSize: FontSizesTheme.small,
         ),
       ),
