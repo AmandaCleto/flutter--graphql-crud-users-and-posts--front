@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+
+import 'package:graphql_crud_users/data/models/users/get_users_posts.dart';
+import 'package:graphql_crud_users/data/queries/users/user_query.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
 import 'package:graphql_crud_users/shared/theme/gradient_decoration.dart';
+import 'package:graphql_crud_users/views/home/components/post_widget.dart';
 import 'package:graphql_crud_users/views/home/home_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -15,6 +19,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> with HomeMixin {
+  late List<GetUsersPosts>? usersPosts;
+
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
@@ -22,6 +28,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('POSTS'),
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               padding: const EdgeInsets.all(20.0),
@@ -35,40 +42,49 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
           ],
         ),
         body: Query(
-          options: QueryOptions(
-            document: gql(readRepositories),
+          options: QueryOptions<List<GetUsersPosts>>(
+            parserFn: (Map<String, dynamic> json) {
+              var rawList = List.of(json["posts"]);
+
+              return rawList
+                  .map((jsonChat) => GetUsersPosts.fromJson(jsonChat))
+                  .toList();
+            },
+            document: gql(UserQuery().getUsersPosts()),
           ),
           builder: (
             QueryResult result, {
             VoidCallback? refetch,
             FetchMore? fetchMore,
           }) {
-            // inspect(result);
-            if (result.data == null) {
+            if (result.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (result.hasException || result.data == null) {
               return const Center(
                 child: Text("Deu bad"),
               );
+            } else {
+              usersPosts = result.parsedData as List<GetUsersPosts>;
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ListView.builder(
+                  itemBuilder: (BuildContext context, index) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PostWidget(
+                          title: usersPosts![index].title,
+                          text: usersPosts![index].content,
+                          author: usersPosts![index].authorFullName,
+                        ),
+                      ],
+                    );
+                  },
+                  itemCount: usersPosts!.length,
+                ),
+              );
             }
-            return Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ListView.builder(
-                itemBuilder: (BuildContext context, index) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      index == 0
-                          ? const Text('Lista de Usuários')
-                          : const SizedBox.shrink(),
-                      Text(
-                        result.data!['users'][index]['fullName'],
-                      ),
-                    ],
-                  );
-                },
-                itemCount: result.data!['users'].length,
-              ),
-            );
           },
         ),
         floatingActionButton: Container(
@@ -104,11 +120,3 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
     );
   }
 }
-
-String readRepositories = """
-  query{
-  users{
-    fullName
-  }
-}
-""";

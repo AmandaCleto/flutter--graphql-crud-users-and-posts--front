@@ -1,4 +1,20 @@
 class UserQuery {
+  String getUsersPosts() {
+    String query = """
+    query {
+      posts {
+        title
+        content
+        author {
+          fullName,
+        }
+      }
+    }
+    """;
+
+    return query;
+  }
+
   String createUser({
     required String firstName,
     required String lastName,
