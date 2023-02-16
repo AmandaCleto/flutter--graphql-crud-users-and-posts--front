@@ -11,3 +11,4 @@ class ScreenArguments {
 
 const String homeRoute = '/home';
 const String welcomeRoute = '/splash-screen';
+const String postWriting = '/post-writing';

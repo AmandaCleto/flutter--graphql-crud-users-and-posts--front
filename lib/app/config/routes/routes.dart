@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/app/config/routes/constants.dart';
 import 'package:graphql_crud_users/views/home/home_view.dart';
+import 'package:graphql_crud_users/views/post_writing/post_writing_view.dart';
 import 'package:graphql_crud_users/views/welcome/welcome_view.dart';
 
 class RouteGenerator {
@@ -19,10 +20,14 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) {
-            ScreenArguments argument = args as ScreenArguments;
-            return HomeView(
-              clientNotifier: argument.clientNotifier!,
-            );
+            return const HomeView();
+          },
+        );
+      case postWriting:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) {
+            return const PostWritingView();
           },
         );
 
