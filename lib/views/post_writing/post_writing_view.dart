@@ -1,0 +1,143 @@
+import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/shared/components/button_gradient_widget.dart';
+import 'package:graphql_crud_users/shared/components/text_input_widget.dart';
+import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
+import 'package:graphql_crud_users/shared/theme/colors.dart';
+import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
+import 'package:graphql_crud_users/views/post_writing/components/select_widget.dart';
+import 'package:graphql_crud_users/views/post_writing/post_writing_mixin.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:provider/provider.dart';
+
+class PostWritingView extends StatefulWidget {
+  const PostWritingView({Key? key}) : super(key: key);
+
+  @override
+  State<PostWritingView> createState() => _PostWritingViewState();
+}
+
+class _PostWritingViewState extends State<PostWritingView>
+    with PostWritingMixin {
+  final postTitleTE = TextEditingController();
+  final contentTitleTE = TextEditingController();
+  final firstNameTitleTE = TextEditingController();
+  final lastNameTitleTE = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('POST WRITING'),
+        actions: [
+          IconButton(
+            padding: const EdgeInsets.all(20.0),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // do something
+            },
+          )
+        ],
+      ),
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Post',
+                      style: TextStyle(
+                        color: ColorsTheme.white,
+                        fontSize: FontSizesTheme.title,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextInputWidget(
+                      maxLength: 5,
+                      textController: postTitleTE,
+                      hintText: 'Title',
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextInputWidget(
+                      maxLength: 250,
+                      textController: contentTitleTE,
+                      hintText: 'Content',
+                    ),
+                    const SizedBox(height: 60.0),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: SelectWidget(
+                        callbackValueWhenSelectFn: (optionSelected) {
+                          if (optionSelected != null) {
+                            firstNameTitleTE.text =
+                                optionSelected.split(' ').first;
+                            lastNameTitleTE.text =
+                                optionSelected.split(' ').last;
+                          }
+                        },
+                      ),
+                    ),
+                    const Text(
+                      'Author',
+                      style: TextStyle(
+                        color: ColorsTheme.white,
+                        fontSize: FontSizesTheme.title,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextInputWidget.onlyOneWordAllowed(
+                      maxLength: 50,
+                      textController: firstNameTitleTE,
+                      hintText: 'First Name',
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextInputWidget.onlyOneWordAllowed(
+                      maxLength: 50,
+                      textController: lastNameTitleTE,
+                      hintText: 'Last Name',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: ButtonGradientWidget(
+                onPressed: () async {
+                  if (formKey.currentState!.validate()) {
+                    // createPost(
+                    //   client: context.read<ValueNotifier<GraphQLClient>?>()!,
+                    //   title: postTitleTE.text,
+                    //   content: contentTitleTE.text,
+                    //   firstName: firstNameTitleTE.text,
+                    //   lastName: lastNameTitleTE.text,
+                    // ).then((value) => Navigator.pop(context));
+
+                    getAuthorId(
+                        client: context.read<ValueNotifier<GraphQLClient>?>()!,
+                        authorId: '63cdb1383ebeb92b4f97ae42');
+                  }
+                },
+                text: 'Create',
+                width: context.percentWidth(0.3),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

@@ -1,4 +1,4 @@
-class UserMutation {
+class AuthorMutation {
   String createUser({
     required String firstName,
     required String lastName,

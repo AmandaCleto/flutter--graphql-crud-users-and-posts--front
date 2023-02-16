@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/app/config/routes/constants.dart';
-import 'package:graphql_crud_users/shared/graphql/config_graphql.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
 import 'package:graphql_crud_users/shared/theme/gradient_decoration.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -14,18 +12,6 @@ class WelcomeView extends StatefulWidget {
 }
 
 class _WelcomeViewState extends State<WelcomeView> {
-  ValueNotifier<GraphQLClient>? clientNotifier;
-
-  @override
-  void initState() {
-    clientNotifier = ConfigGraphQl.initializeGQLClient(
-      context,
-      clientNotifier: clientNotifier,
-    );
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,12 +88,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    homeRoute,
-                    arguments: ScreenArguments(
-                      clientNotifier: clientNotifier,
-                    ),
-                  );
+                  Navigator.of(context).pushNamed(homeRoute);
                 },
               ),
             )

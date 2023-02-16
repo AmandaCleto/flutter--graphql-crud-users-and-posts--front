@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/app/config/routes/constants.dart';
 
-import 'package:graphql_crud_users/data/models/users/get_users_posts.dart';
-import 'package:graphql_crud_users/data/queries/users/user_query.dart';
+import 'package:graphql_crud_users/data/models/authors/get_authors_posts.dart';
+import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
+import 'package:graphql_crud_users/shared/components/button_gradient_widget.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
@@ -12,24 +14,25 @@ import 'package:graphql_crud_users/views/home/components/post_widget.dart';
 import 'package:graphql_crud_users/views/home/home_controller.dart';
 import 'package:graphql_crud_users/views/home/home_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
-  final ValueNotifier<GraphQLClient> clientNotifier;
-
-  const HomeView({super.key, required this.clientNotifier});
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> with HomeMixin {
-  late List<GetUsersPosts>? usersPosts;
+  late List<GetAuthorsPosts>? usersPosts;
   final homeController = HomeController();
 
   @override
   Widget build(BuildContext context) {
+    var client = context.read<ValueNotifier<GraphQLClient>?>();
+
     return GraphQLProvider(
-      client: widget.clientNotifier,
+      client: client,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('POSTS'),
@@ -47,12 +50,12 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
           ],
         ),
         body: Query(
-          options: QueryOptions<List<GetUsersPosts>>(
+          options: QueryOptions<List<GetAuthorsPosts>>(
             parserFn: (Map<String, dynamic> json) {
               var rawList = List.of(json["posts"]);
 
               return rawList
-                  .map((jsonChat) => GetUsersPosts.fromJson(jsonChat))
+                  .map((jsonChat) => GetAuthorsPosts.fromJson(jsonChat))
                   .toList();
             },
             onComplete: (Map<String, dynamic> json) {
@@ -62,7 +65,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                 homeController.turnHasDataOff();
               }
             },
-            document: gql(UserQuery().getUsersPosts),
+            document: gql(AuthorQuery.getAuthorsPosts),
           ),
           builder: (
             QueryResult result, {
@@ -100,7 +103,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                   ],
                 ),
               );
-            } else if ((result.parsedData as List<GetUsersPosts>).isEmpty) {
+            } else if ((result.parsedData as List<GetAuthorsPosts>).isEmpty) {
               return Container(
                 width: context.screenWidth,
                 padding: EdgeInsets.only(top: context.percentHeight(0.25)),
@@ -127,50 +130,17 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                       ),
                     ),
                     const SizedBox(height: 30.0),
-                    SizedBox(
-                      width: context.percentWidth(0.40),
-                      height: 60.0,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(80.0),
-                          ),
-                          padding: const EdgeInsets.all(0.0),
-                        ),
-                        child: Ink(
-                          decoration: const BoxDecoration(
-                            gradient: GradientDecoration.bluePinkGradient,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(80.0)),
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  Icons.border_color_rounded,
-                                  color: ColorsTheme.blue,
-                                ),
-                                SizedBox(width: 10.0),
-                                Text(
-                                  'write post',
-                                  style: TextStyle(
-                                    fontSize: FontSizesTheme.bodyText,
-                                    color: ColorsTheme.blue,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                    ButtonGradientWidget.iconWrite(
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed(postWriting),
+                      text: 'write post',
+                      width: context.percentWidth(0.35),
                     ),
                   ],
                 ),
               );
             } else {
-              usersPosts = result.parsedData as List<GetUsersPosts>;
+              usersPosts = result.parsedData as List<GetAuthorsPosts>;
 
               return ListView.builder(
                 physics: const BouncingScrollPhysics(),
@@ -189,7 +159,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                           postId: usersPosts![index].postId,
                           callbackFn: () async {
                             await deletePost(
-                              client: widget.clientNotifier,
+                              client: client!,
                               postId: usersPosts![index].postId,
                             );
 
@@ -224,9 +194,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                   highlightElevation: 0,
                   hoverElevation: 0,
                   elevation: 0,
-                  onPressed: () {
-                    createUser(client: widget.clientNotifier);
-                  },
+                  onPressed: () => Navigator.of(context).pushNamed(postWriting),
                   icon: const Icon(
                     Icons.border_color_rounded,
                     color: ColorsTheme.blue,

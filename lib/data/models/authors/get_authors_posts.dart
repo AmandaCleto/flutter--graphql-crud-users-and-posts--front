@@ -1,10 +1,10 @@
-class GetUsersPosts {
+class GetAuthorsPosts {
   String authorFullName;
   String title;
   String content;
   String postId;
 
-  GetUsersPosts.fromJson(Map<String, dynamic> data)
+  GetAuthorsPosts.fromJson(Map<String, dynamic> data)
       : authorFullName = data['author']['fullName'],
         title = data['title'],
         content = data['content'],

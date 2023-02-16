@@ -8,4 +8,26 @@ class PostMutation {
 
     return mutation;
   }
+
+  static String createPost({
+    required String authorId,
+    required String content,
+    required String title,
+  }) {
+    String mutation = """
+    mutation {
+      createPost(
+        data: {
+          content: $content,
+    	    title: $title,
+          author: $authorId
+        }
+      ){
+       _id
+      }
+    }
+    """;
+
+    return mutation;
+  }
 }
