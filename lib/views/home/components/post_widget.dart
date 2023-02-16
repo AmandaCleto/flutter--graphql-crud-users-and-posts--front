@@ -94,30 +94,36 @@ class _PostWidgetState extends State<PostWidget> {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: context.screenWidth,
-                child: Text(
-                  widget.title,
-                  textAlign: TextAlign.start,
-                  maxLines: 1,
-                  style: style.copyWith(
-                    fontSize: FontSizesTheme.subtitle,
-                  ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: context.screenWidth,
+                      child: Text(
+                        widget.title,
+                        textAlign: TextAlign.start,
+                        maxLines: 1,
+                        style: style.copyWith(
+                          fontSize: FontSizesTheme.subtitle,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Flexible(
+                      child: Text(
+                        widget.text,
+                        textAlign: TextAlign.justify,
+                        maxLines: 4,
+                        style: style,
+                      ),
+                    ),
+                    const SizedBox(height: 5.0),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8.0),
-              Flexible(
-                child: Text(
-                  widget.text,
-                  textAlign: TextAlign.justify,
-                  maxLines: 4,
-                  style: style,
-                ),
-              ),
-              const SizedBox(height: 5.0),
               SizedBox(
                 width: context.screenWidth,
                 child: Text(

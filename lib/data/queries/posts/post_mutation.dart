@@ -18,9 +18,9 @@ class PostMutation {
     mutation {
       createPost(
         data: {
-          content: $content,
-    	    title: $title,
-          author: $authorId
+          content:"$content",
+    	    title: "$title",
+          author: "$authorId"
         }
       ){
        _id

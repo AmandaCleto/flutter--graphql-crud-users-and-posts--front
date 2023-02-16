@@ -5,6 +5,7 @@ import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
 import 'package:graphql_crud_users/views/post_writing/components/select_widget.dart';
+import 'package:graphql_crud_users/views/post_writing/post_writing_controller.dart';
 import 'package:graphql_crud_users/views/post_writing/post_writing_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,10 @@ class _PostWritingViewState extends State<PostWritingView>
   final contentTitleTE = TextEditingController();
   final firstNameTitleTE = TextEditingController();
   final lastNameTitleTE = TextEditingController();
+
   final formKey = GlobalKey<FormState>();
+
+  final _postWritingController = PostWritingController();
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +67,7 @@ class _PostWritingViewState extends State<PostWritingView>
                     ),
                     const SizedBox(height: 20.0),
                     TextInputWidget(
-                      maxLength: 5,
+                      maxLength: 50,
                       textController: postTitleTE,
                       hintText: 'Title',
                     ),
@@ -77,12 +81,14 @@ class _PostWritingViewState extends State<PostWritingView>
                     Align(
                       alignment: Alignment.centerRight,
                       child: SelectWidget(
-                        callbackValueWhenSelectFn: (optionSelected) {
+                        callbackValueWhenSelectFn: (optionSelected, authorId) {
                           if (optionSelected != null) {
                             firstNameTitleTE.text =
                                 optionSelected.split(' ').first;
                             lastNameTitleTE.text =
                                 optionSelected.split(' ').last;
+
+                            _postWritingController.setNewValue = authorId;
                           }
                         },
                       ),
@@ -96,16 +102,27 @@ class _PostWritingViewState extends State<PostWritingView>
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    TextInputWidget.onlyOneWordAllowed(
-                      maxLength: 50,
-                      textController: firstNameTitleTE,
-                      hintText: 'First Name',
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextInputWidget.onlyOneWordAllowed(
-                      maxLength: 50,
-                      textController: lastNameTitleTE,
-                      hintText: 'Last Name',
+                    ValueListenableBuilder<String>(
+                      valueListenable: _postWritingController,
+                      builder: (context, value, child) {
+                        return Column(
+                          children: [
+                            TextInputWidget.onlyOneWordAllowed(
+                              maxLength: 50,
+                              textController: firstNameTitleTE,
+                              hintText: 'First Name',
+                              readonly: value.isNotEmpty,
+                            ),
+                            const SizedBox(height: 20.0),
+                            TextInputWidget.onlyOneWordAllowed(
+                              maxLength: 50,
+                              textController: lastNameTitleTE,
+                              hintText: 'Last Name',
+                              readonly: value.isNotEmpty,
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -118,17 +135,25 @@ class _PostWritingViewState extends State<PostWritingView>
               child: ButtonGradientWidget(
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    // createPost(
-                    //   client: context.read<ValueNotifier<GraphQLClient>?>()!,
-                    //   title: postTitleTE.text,
-                    //   content: contentTitleTE.text,
-                    //   firstName: firstNameTitleTE.text,
-                    //   lastName: lastNameTitleTE.text,
-                    // ).then((value) => Navigator.pop(context));
+                    var client = context.read<ValueNotifier<GraphQLClient>?>()!;
+                    String authorId;
 
-                    getAuthorId(
-                        client: context.read<ValueNotifier<GraphQLClient>?>()!,
-                        authorId: '63cdb1383ebeb92b4f97ae42');
+                    if (_postWritingController.value.isEmpty) {
+                      authorId = await createAuthor(
+                        client: client,
+                        firstName: firstNameTitleTE.text,
+                        lastName: lastNameTitleTE.text,
+                      );
+                    } else {
+                      authorId = _postWritingController.value;
+                    }
+
+                    await createPost(
+                      client: client,
+                      title: postTitleTE.text,
+                      content: contentTitleTE.text,
+                      authorId: authorId,
+                    ).then((value) => Navigator.pop(context, true));
                   }
                 },
                 text: 'Create',
