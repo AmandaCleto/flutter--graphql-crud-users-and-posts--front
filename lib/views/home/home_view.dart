@@ -59,7 +59,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                   .toList();
             },
             onComplete: (Map<String, dynamic> json) {
-              if (json["posts"].isNotEmpty) {
+              if (json['posts'] != null && json["posts"].isNotEmpty) {
                 homeController.turnHasDataOn();
               } else {
                 homeController.turnHasDataOff();
@@ -75,110 +75,141 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
             if (result.isLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (result.hasException) {
-              return Container(
-                width: context.screenWidth,
-                padding: EdgeInsets.only(top: context.percentHeight(0.25)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: const [
-                    Text(
-                      "Something went wrong :(",
-                      style: TextStyle(
-                        color: ColorsTheme.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: FontSizesTheme.subtitle,
+              return RefreshIndicator(
+                color: ColorsTheme.white,
+                backgroundColor: ColorsTheme.primary,
+                onRefresh: refreshPage,
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      width: context.screenWidth,
+                      height: constraints.maxHeight,
+                      padding:
+                          EdgeInsets.only(top: context.percentHeight(0.25)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: const [
+                          Text(
+                            "Something went wrong :(",
+                            style: TextStyle(
+                              color: ColorsTheme.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: FontSizesTheme.subtitle,
+                            ),
+                          ),
+                          SizedBox(height: 40.0),
+                          Text(
+                            "Please verify your internet \n connection, and try it again.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: ColorsTheme.white,
+                              fontSize: FontSizesTheme.bodyText,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 40.0),
-                    Text(
-                      "Please verify your internet \n connection, and try it again.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: ColorsTheme.white,
-                        fontSize: FontSizesTheme.bodyText,
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                }),
               );
             } else if ((result.parsedData as List<GetAuthorsPosts>).isEmpty) {
-              return Container(
-                width: context.screenWidth,
-                padding: EdgeInsets.only(top: context.percentHeight(0.25)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    const Text(
-                      "Oh no! There is no posts yet..",
-                      style: TextStyle(
-                        color: ColorsTheme.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: FontSizesTheme.subtitle,
-                      ),
-                    ),
-                    const SizedBox(height: 40.0),
-                    const Text(
-                      "How about creating one?",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: ColorsTheme.white,
-                        fontSize: FontSizesTheme.bodyText,
-                      ),
-                    ),
-                    const SizedBox(height: 30.0),
-                    ButtonGradientWidget.iconWrite(
-                      onPressed: () async {
-                        var result =
-                            await Navigator.of(context).pushNamed(postWriting);
+              return RefreshIndicator(
+                color: ColorsTheme.white,
+                backgroundColor: ColorsTheme.primary,
+                onRefresh: refreshPage,
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      width: context.screenWidth,
+                      height: constraints.maxHeight,
+                      padding:
+                          EdgeInsets.only(top: context.percentHeight(0.25)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const Text(
+                            "Oh no! There is no posts yet..",
+                            style: TextStyle(
+                              color: ColorsTheme.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: FontSizesTheme.subtitle,
+                            ),
+                          ),
+                          const SizedBox(height: 40.0),
+                          const Text(
+                            "How about creating one?",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: ColorsTheme.white,
+                              fontSize: FontSizesTheme.bodyText,
+                            ),
+                          ),
+                          const SizedBox(height: 30.0),
+                          ButtonGradientWidget.iconWrite(
+                            onPressed: () async {
+                              var result = await Navigator.of(context)
+                                  .pushNamed(postWriting);
 
-                        if (result == true) {
-                          refetch!();
-                        }
-                      },
-                      text: 'write post',
-                      width: context.percentWidth(0.35),
+                              if (result == true) {
+                                refetch!();
+                              }
+                            },
+                            text: 'write post',
+                            width: context.percentWidth(0.35),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                }),
               );
             } else {
-              usersPosts = result.parsedData as List<GetAuthorsPosts>;
+              usersPosts = (result.parsedData as List<GetAuthorsPosts>)
+                  .reversed
+                  .toList();
 
-              return ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (BuildContext context, index) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (index == 0) const SizedBox(height: 20.0),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: PostWidget(
-                          title: usersPosts![index].title,
-                          text: usersPosts![index].content,
-                          author: usersPosts![index].authorFullName,
-                          postId: usersPosts![index].postId,
-                          callbackFn: () async {
-                            await deletePost(
-                              client: client!,
-                              postId: usersPosts![index].postId,
-                            );
+              return RefreshIndicator(
+                color: ColorsTheme.white,
+                backgroundColor: ColorsTheme.primary,
+                onRefresh: refreshPage,
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (BuildContext context, index) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (index == 0) const SizedBox(height: 20.0),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: PostWidget(
+                            title: usersPosts![index].title,
+                            text: usersPosts![index].content,
+                            author: usersPosts![index].authorFullName,
+                            postId: usersPosts![index].postId,
+                            callbackFn: () async {
+                              await deletePost(
+                                client: client!,
+                                postId: usersPosts![index].postId,
+                              );
 
-                            refetch!();
-                          },
+                              refetch!();
+                            },
+                          ),
                         ),
-                      ),
-                      if (index != usersPosts!.length)
-                        const SizedBox(height: 20.0),
-                    ],
-                  );
-                },
-                itemCount: usersPosts!.length,
+                        if (index != usersPosts!.length)
+                          const SizedBox(height: 20.0),
+                      ],
+                    );
+                  },
+                  itemCount: usersPosts!.length,
+                ),
               );
             }
           },
