@@ -3,8 +3,7 @@ import 'package:graphql_crud_users/shared/components/alert_dialog_widget.dart';
 import 'package:graphql_crud_users/shared/theme/colors.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
 import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
-
-typedef FutureCallback = Future<void> Function();
+import 'package:graphql_crud_users/shared/typedefs/typedefs.dart';
 
 class PostWidget extends StatefulWidget {
   final String text, title, author, postId;

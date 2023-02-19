@@ -44,7 +44,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
               highlightColor: Colors.transparent,
               icon: const Icon(Icons.settings),
               onPressed: () {
-                // do something
+                Navigator.of(context).pushNamed(configurationRoute);
               },
             )
           ],
@@ -154,7 +154,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                           ButtonGradientWidget.iconWrite(
                             onPressed: () async {
                               var result = await Navigator.of(context)
-                                  .pushNamed(postWriting);
+                                  .pushNamed(postWritingRoute);
 
                               if (result == true) {
                                 refetch!();
@@ -233,7 +233,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
                   elevation: 0,
                   onPressed: () async {
                     var result =
-                        await Navigator.of(context).pushNamed(postWriting);
+                        await Navigator.of(context).pushNamed(postWritingRoute);
 
                     if (result == true) {
                       setState(() {});

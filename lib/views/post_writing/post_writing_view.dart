@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/app/config/routes/constants.dart';
 import 'package:graphql_crud_users/shared/components/button_gradient_widget.dart';
 import 'package:graphql_crud_users/shared/components/text_input_widget.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
@@ -40,7 +41,7 @@ class _PostWritingViewState extends State<PostWritingView>
             highlightColor: Colors.transparent,
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // do something
+              Navigator.of(context).pushNamed(configurationRoute);
             },
           )
         ],

@@ -1,14 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-
-class ScreenArguments {
-  ValueNotifier<GraphQLClient>? clientNotifier;
-
-  ScreenArguments({
-    this.clientNotifier,
-  });
-}
+class ScreenArguments {}
 
 const String homeRoute = '/home';
 const String welcomeRoute = '/splash-screen';
-const String postWriting = '/post-writing';
+const String postWritingRoute = '/post-writing';
+const String configurationRoute = '/configuration';
