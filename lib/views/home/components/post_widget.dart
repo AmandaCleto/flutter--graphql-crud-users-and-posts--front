@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/shared/components/alert_dialog_widget.dart';
-import 'package:graphql_crud_users/shared/theme/colors.dart';
+import 'package:graphql_crud_users/shared/themes/colors.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
-import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
+import 'package:graphql_crud_users/shared/themes/font_sizes.dart';
 import 'package:graphql_crud_users/shared/typedefs/typedefs.dart';
 
 class PostWidget extends StatefulWidget {

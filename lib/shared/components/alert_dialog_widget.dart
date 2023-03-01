@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
-import 'package:graphql_crud_users/shared/theme/colors.dart';
-import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
-import 'package:graphql_crud_users/shared/theme/gradient_decoration.dart';
+import 'package:graphql_crud_users/shared/themes/colors.dart';
+import 'package:graphql_crud_users/shared/themes/font_sizes.dart';
+import 'package:graphql_crud_users/shared/themes/gradient_decoration.dart';
 
 class AlertDialogWidget extends StatelessWidget {
   final String title, content, confirmationButtonText, denialButtonText;

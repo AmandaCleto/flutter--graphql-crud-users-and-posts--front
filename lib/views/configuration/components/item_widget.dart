@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_crud_users/shared/theme/colors.dart';
+import 'package:graphql_crud_users/shared/themes/colors.dart';
 import 'package:graphql_crud_users/shared/typedefs/typedefs.dart';
 
 class ItemWidget extends StatelessWidget {

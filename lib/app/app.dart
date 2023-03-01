@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/app/config/routes/constants.dart';
 import 'package:graphql_crud_users/app/config/routes/routes.dart';
-import 'package:graphql_crud_users/shared/theme/theme.dart';
+import 'package:graphql_crud_users/shared/themes/theme.dart';
 
 import 'config/aplication_binding/application_binding_provider.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:graphql_crud_users/shared/theme/colors.dart';
+import 'package:graphql_crud_users/shared/themes/colors.dart';
 
 class TextInputWidget extends StatelessWidget {
   final String hintText;

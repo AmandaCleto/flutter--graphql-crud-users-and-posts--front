@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_crud_users/shared/theme/colors.dart';
-import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
+import 'package:graphql_crud_users/shared/themes/colors.dart';
+import 'package:graphql_crud_users/shared/themes/font_sizes.dart';
 
 @immutable
 class AppTheme {

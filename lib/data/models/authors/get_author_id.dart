@@ -1,8 +1,8 @@
-class GetAuthorId {
+class GetAuthorFirstAndLastName {
   String firstName;
   String lastName;
 
-  GetAuthorId.fromJson(Map<String, dynamic> data)
+  GetAuthorFirstAndLastName.fromJson(Map<String, dynamic> data)
       : firstName = data['firstName'],
         lastName = data['lastName'];
 }
