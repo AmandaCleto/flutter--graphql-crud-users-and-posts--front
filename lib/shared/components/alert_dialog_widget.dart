@@ -7,9 +7,11 @@ import 'package:graphql_crud_users/shared/themes/gradient_decoration.dart';
 
 class AlertDialogWidget extends StatelessWidget {
   final String title, content, confirmationButtonText, denialButtonText;
+  final Future<void> Function()? confirmationFn;
 
   const AlertDialogWidget({
     Key? key,
+    this.confirmationFn,
     required this.title,
     required this.content,
     required this.denialButtonText,
@@ -75,7 +77,15 @@ class AlertDialogWidget extends StatelessWidget {
               width: context.percentWidth(0.30),
               height: 60.0,
               child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: confirmationFn == null
+                    ? () => Navigator.of(context).pop(true)
+                    : () async {
+                        final navigator = Navigator.of(context);
+
+                        await confirmationFn!();
+
+                        navigator.pop(true);
+                      },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(80.0),

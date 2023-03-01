@@ -5,6 +5,8 @@ import 'package:graphql_crud_users/data/queries/authors/author_mutation.dart';
 import 'package:graphql_crud_users/data/queries/posts/post_mutation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../shared/components/alert_dialog_widget.dart';
+
 mixin ConfigurationMixin {
   _deleteAllPostsFromAuthorId({
     required ValueNotifier<GraphQLClient> client,
@@ -30,7 +32,7 @@ mixin ConfigurationMixin {
     }
   }
 
-  Future<void> deleteAuthor({
+  Future<bool> _deleteAuthor({
     required ValueNotifier<GraphQLClient> client,
     required String authorId,
   }) async {
@@ -45,14 +47,42 @@ mixin ConfigurationMixin {
 
       if (result.hasException) {
         inspect(result.exception?.graphqlErrors[0].message);
+        return false;
       } else if (result.data != null) {
-        inspect(result.data!["deleteUser"]);
+        return true;
       }
 
-      // return "";
+      return false;
     } catch (e) {
-      // return "";
+      return false;
     }
+  }
+
+  Future<bool> deleteAuthor(
+    context, {
+    required ValueNotifier<GraphQLClient> client,
+    required String authorId,
+    required String fullName,
+  }) async {
+    bool result = false;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialogWidget(
+          title: 'Are you sure?',
+          content:
+              'By deleting $fullName, all posts related to this author will be deleted as well',
+          confirmationButtonText: "I'm sure!",
+          denialButtonText: "No",
+          confirmationFn: () async {
+            result = await _deleteAuthor(client: client, authorId: authorId);
+          },
+        );
+      },
+    );
+
+    return result;
   }
 
   editUser() async {}

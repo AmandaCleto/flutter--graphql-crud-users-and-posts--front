@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/data/models/authors/get_authors.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_query.dart';

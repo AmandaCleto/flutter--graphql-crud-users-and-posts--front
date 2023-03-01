@@ -46,9 +46,9 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               icon: const Icon(Icons.settings),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pushNamed(configurationRoute).then(
-                  (value) {
+                  (value) async {
                     setState(() {});
                   },
                 );
@@ -186,12 +186,13 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
                   hoverElevation: 0,
                   elevation: 0,
                   onPressed: () async {
-                    var result =
-                        await Navigator.of(context).pushNamed(postWritingRoute);
-
-                    if (result == true) {
-                      setState(() {});
-                    }
+                    await Navigator.of(context)
+                        .pushNamed(postWritingRoute)
+                        .then((value) {
+                      if (value == true) {
+                        setState(() {});
+                      }
+                    });
                   },
                   icon: const Icon(
                     Icons.border_color_rounded,

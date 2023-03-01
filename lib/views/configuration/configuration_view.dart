@@ -122,12 +122,17 @@ class _ConfigurationViewState extends State<ConfigurationView>
                               lastName: listAuthors![index].lastName,
                               editCallback: () async {},
                               deleteCallback: () async {
-                                await deleteAuthor(
+                                bool result = await deleteAuthor(
+                                  context,
                                   client: client!,
                                   authorId: listAuthors![index].id,
+                                  fullName:
+                                      "${listAuthors![index].firstName} ${listAuthors![index].lastName}",
                                 );
 
-                                refetch!();
+                                if (result) {
+                                  refetch!();
+                                }
                               },
                             ),
                           ),

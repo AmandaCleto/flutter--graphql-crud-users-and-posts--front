@@ -40,6 +40,7 @@ class _PostWidgetState extends State<PostWidget> {
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Post has been successfully deleted!'),
+          duration: Duration(seconds: 2),
         ));
       },
       confirmDismiss: (DismissDirection direction) async {
