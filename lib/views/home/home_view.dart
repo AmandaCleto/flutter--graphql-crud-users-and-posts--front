@@ -148,7 +148,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
                                 client: client!,
                                 postId: usersPosts![index].postId,
                               );
-
+                              await Future.delayed(const Duration(seconds: 2));
                               refetch!();
                             },
                           ),

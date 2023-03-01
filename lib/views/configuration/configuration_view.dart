@@ -122,12 +122,13 @@ class _ConfigurationViewState extends State<ConfigurationView>
                               lastName: listAuthors![index].lastName,
                               editCallback: () async {},
                               deleteCallback: () async {
-                                inspect(listAuthors![index]);
                                 await deleteAuthor(
                                   client: client!,
                                   userId: listAuthors![index].id,
                                 );
-                                refreshPage;
+                                await Future.delayed(
+                                  const Duration(seconds: 2),
+                                );
                                 refetch!();
                               },
                             ),

@@ -9,15 +9,12 @@ mixin ConfigurationMixin {
     required ValueNotifier<GraphQLClient> client,
     required String userId,
   }) async {
-    print(userId);
     try {
       String mutation = AuthorMutation.deleteAuthor(userId: userId);
 
       QueryResult result = await client.value.mutate(
         MutationOptions(document: gql(mutation)),
       );
-
-      inspect(result);
 
       if (result.hasException) {
         inspect(result.exception?.graphqlErrors[0].message);
