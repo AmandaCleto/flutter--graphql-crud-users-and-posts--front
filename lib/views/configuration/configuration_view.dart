@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/data/models/authors/get_author_id.dart';
-import 'package:graphql_crud_users/data/models/authors/get_authors.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
 import 'package:graphql_crud_users/shared/components/query_has_exception_widget.dart';
 import 'package:graphql_crud_users/shared/layouts/query_refresh_layout.dart';
@@ -10,6 +9,7 @@ import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
 import 'package:graphql_crud_users/shared/themes/colors.dart';
 import 'package:graphql_crud_users/shared/themes/font_sizes.dart';
 import 'package:graphql_crud_users/views/configuration/components/item_widget.dart';
+import 'package:graphql_crud_users/views/configuration/configuration_mixin.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -23,8 +23,8 @@ class ConfigurationView extends StatefulWidget {
 }
 
 class _ConfigurationViewState extends State<ConfigurationView>
-    with RefreshPageMixin {
-  late List<GetAuthorFirstAndLastName>? listAuthors;
+    with RefreshPageMixin, ConfigurationMixin {
+  late List<GetAuthor>? listAuthors;
   @override
   Widget build(BuildContext context) {
     var client = context.read<ValueNotifier<GraphQLClient>?>();
@@ -36,21 +36,13 @@ class _ConfigurationViewState extends State<ConfigurationView>
           title: const Text('CONFIGURATION'),
         ),
         body: Query(
-          options: QueryOptions<List<GetAuthorFirstAndLastName>>(
+          options: QueryOptions<List<GetAuthor>>(
             parserFn: (Map<String, dynamic> json) {
               var rawList = List.of(json["users"]);
 
               return rawList
-                  .map((jsonChat) =>
-                      GetAuthorFirstAndLastName.fromJson(jsonChat))
+                  .map((jsonChat) => GetAuthor.fromJson(jsonChat))
                   .toList();
-            },
-            onComplete: (Map<String, dynamic> json) {
-              if (json['posts'] != null && json["users"].isNotEmpty) {
-                // homeController.turnHasDataOn();
-              } else {
-                // homeController.turnHasDataOff();
-              }
             },
             document: gql(AuthorQuery.getAuthors),
           ),
@@ -67,8 +59,7 @@ class _ConfigurationViewState extends State<ConfigurationView>
               return QueryHasExceptionWidget(
                 onRefresh: refreshPage,
               );
-            } else if ((result.parsedData as List<GetAuthorFirstAndLastName>)
-                .isEmpty) {
+            } else if ((result.parsedData as List<GetAuthor>).isEmpty) {
               return QueryRefreshLayout(
                 onRefresh: refreshPage,
                 body: const [
@@ -92,49 +83,59 @@ class _ConfigurationViewState extends State<ConfigurationView>
                 ],
               );
             } else {
-              listAuthors =
-                  (result.parsedData as List<GetAuthorFirstAndLastName>)
-                      .reversed
-                      .toList();
-              return SizedBox(
-                height: context.screenHeight,
-                child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: listAuthors!.length,
-                  padding: const EdgeInsets.all(20.0),
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Visibility(
-                          visible: index == 0,
-                          child: const Padding(
-                            padding: EdgeInsets.only(bottom: 20.0),
-                            child: Text(
-                              'Authors',
-                              style: TextStyle(
-                                color: ColorsTheme.white,
-                                fontSize: FontSizesTheme.title,
-                                fontWeight: FontWeight.bold,
+              listAuthors = (result.parsedData as List<GetAuthor>).toList();
+              return RefreshIndicator(
+                color: ColorsTheme.white,
+                backgroundColor: ColorsTheme.primary,
+                onRefresh: refreshPage,
+                child: SizedBox(
+                  height: context.screenHeight,
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: listAuthors!.length,
+                    padding: const EdgeInsets.all(20.0),
+                    itemBuilder: (BuildContext context, int index) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Visibility(
+                            visible: index == 0,
+                            child: const Padding(
+                              padding: EdgeInsets.only(bottom: 20.0),
+                              child: Text(
+                                'Authors',
+                                style: TextStyle(
+                                  color: ColorsTheme.white,
+                                  fontSize: FontSizesTheme.title,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: index == listAuthors!.length
-                              ? const EdgeInsets.all(0)
-                              : const EdgeInsets.only(bottom: 20.0),
-                          child: ItemWidget(
-                            firstName: listAuthors![index].firstName,
-                            lastName: listAuthors![index].lastName,
-                            editCallback: () async {},
-                            deleteCallback: () async {},
+                          Padding(
+                            padding: index == listAuthors!.length
+                                ? const EdgeInsets.all(0)
+                                : const EdgeInsets.only(bottom: 20.0),
+                            child: ItemWidget(
+                              firstName: listAuthors![index].firstName,
+                              lastName: listAuthors![index].lastName,
+                              editCallback: () async {},
+                              deleteCallback: () async {
+                                inspect(listAuthors![index]);
+                                await deleteAuthor(
+                                  client: client!,
+                                  userId: listAuthors![index].id,
+                                );
+                                refreshPage;
+                                refetch!();
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      );
+                    },
+                  ),
                 ),
               );
             }

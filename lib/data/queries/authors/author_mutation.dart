@@ -20,4 +20,14 @@ class AuthorMutation {
 
     return query;
   }
+
+  static String deleteAuthor({required String userId}) {
+    String query = """
+    mutation {
+      deleteUser(id: "$userId")
+    }
+    """;
+
+    return query;
+  }
 }
