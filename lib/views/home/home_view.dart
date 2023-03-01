@@ -6,10 +6,13 @@ import 'package:graphql_crud_users/app/config/routes/constants.dart';
 import 'package:graphql_crud_users/data/models/authors/get_authors_posts.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
 import 'package:graphql_crud_users/shared/components/button_gradient_widget.dart';
+import 'package:graphql_crud_users/shared/components/query_has_exception_widget.dart';
+import 'package:graphql_crud_users/shared/layouts/query_refresh_layout.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
-import 'package:graphql_crud_users/shared/theme/colors.dart';
-import 'package:graphql_crud_users/shared/theme/font_sizes.dart';
-import 'package:graphql_crud_users/shared/theme/gradient_decoration.dart';
+import 'package:graphql_crud_users/shared/themes/colors.dart';
+import 'package:graphql_crud_users/shared/themes/font_sizes.dart';
+import 'package:graphql_crud_users/shared/themes/gradient_decoration.dart';
+import 'package:graphql_crud_users/shared/utils/refresh_page_mixin.dart';
 import 'package:graphql_crud_users/views/home/components/post_widget.dart';
 import 'package:graphql_crud_users/views/home/home_controller.dart';
 import 'package:graphql_crud_users/views/home/home_mixin.dart';
@@ -23,7 +26,7 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> with HomeMixin {
+class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
   late List<GetAuthorsPosts>? usersPosts;
   final homeController = HomeController();
 
@@ -73,101 +76,48 @@ class _HomeViewState extends State<HomeView> with HomeMixin {
             FetchMore? fetchMore,
           }) {
             if (result.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             } else if (result.hasException) {
-              return RefreshIndicator(
-                color: ColorsTheme.white,
-                backgroundColor: ColorsTheme.primary,
+              return QueryHasExceptionWidget(
                 onRefresh: refreshPage,
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Container(
-                      width: context.screenWidth,
-                      height: constraints.maxHeight,
-                      padding:
-                          EdgeInsets.only(top: context.percentHeight(0.25)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        children: const [
-                          Text(
-                            "Something went wrong :(",
-                            style: TextStyle(
-                              color: ColorsTheme.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: FontSizesTheme.subtitle,
-                            ),
-                          ),
-                          SizedBox(height: 40.0),
-                          Text(
-                            "Please verify your internet \n connection, and try it again.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ColorsTheme.white,
-                              fontSize: FontSizesTheme.bodyText,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
               );
             } else if ((result.parsedData as List<GetAuthorsPosts>).isEmpty) {
-              return RefreshIndicator(
-                color: ColorsTheme.white,
-                backgroundColor: ColorsTheme.primary,
+              return QueryRefreshLayout(
                 onRefresh: refreshPage,
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Container(
-                      width: context.screenWidth,
-                      height: constraints.maxHeight,
-                      padding:
-                          EdgeInsets.only(top: context.percentHeight(0.25)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const Text(
-                            "Oh no! There is no posts yet..",
-                            style: TextStyle(
-                              color: ColorsTheme.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: FontSizesTheme.subtitle,
-                            ),
-                          ),
-                          const SizedBox(height: 40.0),
-                          const Text(
-                            "How about creating one?",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ColorsTheme.white,
-                              fontSize: FontSizesTheme.bodyText,
-                            ),
-                          ),
-                          const SizedBox(height: 30.0),
-                          ButtonGradientWidget.iconWrite(
-                            onPressed: () async {
-                              var result = await Navigator.of(context)
-                                  .pushNamed(postWritingRoute);
-
-                              if (result == true) {
-                                refetch!();
-                              }
-                            },
-                            text: 'write post',
-                            width: context.percentWidth(0.35),
-                          ),
-                        ],
-                      ),
+                body: [
+                  const Text(
+                    "Oh no! There is no posts yet..",
+                    style: TextStyle(
+                      color: ColorsTheme.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: FontSizesTheme.subtitle,
                     ),
-                  );
-                }),
+                  ),
+                  const SizedBox(height: 40.0),
+                  const Text(
+                    "How about creating one?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: ColorsTheme.white,
+                      fontSize: FontSizesTheme.bodyText,
+                    ),
+                  ),
+                  const SizedBox(height: 30.0),
+                  ButtonGradientWidget.iconWrite(
+                    onPressed: () async {
+                      var result = await Navigator.of(context)
+                          .pushNamed(postWritingRoute);
+
+                      if (result == true) {
+                        refetch!();
+                      }
+                    },
+                    text: 'write post',
+                    width: context.percentWidth(0.35),
+                  ),
+                ],
               );
             } else {
               usersPosts = (result.parsedData as List<GetAuthorsPosts>)

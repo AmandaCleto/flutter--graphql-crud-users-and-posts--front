@@ -4,13 +4,7 @@ import 'package:graphql_crud_users/data/queries/posts/post_mutation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/material.dart';
 
-mixin HomeMixin<T extends StatefulWidget> on State<T> {
-  Future<void> refreshPage() async {
-    return Future<void>.delayed(const Duration(seconds: 1)).then((_) {
-      setState(() {});
-    });
-  }
-
+mixin HomeMixin {
   Future<String> deletePost({
     required ValueNotifier<GraphQLClient> client,
     required String postId,
