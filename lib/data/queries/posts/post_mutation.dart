@@ -9,6 +9,16 @@ class PostMutation {
     return mutation;
   }
 
+  static String deleteAllPostsFromAuthorId({required String authorId}) {
+    String mutation = """
+    mutation {
+      deleteAllPostFromUserId(id: "$authorId")
+    }
+    """;
+
+    return mutation;
+  }
+
   static String createPost({
     required String authorId,
     required String content,

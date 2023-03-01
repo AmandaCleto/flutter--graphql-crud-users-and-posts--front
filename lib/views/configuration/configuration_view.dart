@@ -124,11 +124,9 @@ class _ConfigurationViewState extends State<ConfigurationView>
                               deleteCallback: () async {
                                 await deleteAuthor(
                                   client: client!,
-                                  userId: listAuthors![index].id,
+                                  authorId: listAuthors![index].id,
                                 );
-                                await Future.delayed(
-                                  const Duration(seconds: 2),
-                                );
+
                                 refetch!();
                               },
                             ),

@@ -21,10 +21,10 @@ class AuthorMutation {
     return query;
   }
 
-  static String deleteAuthor({required String userId}) {
+  static String deleteAuthor({required String authorId}) {
     String query = """
     mutation {
-      deleteUser(id: "$userId")
+      deleteUser(id: "$authorId")
     }
     """;
 

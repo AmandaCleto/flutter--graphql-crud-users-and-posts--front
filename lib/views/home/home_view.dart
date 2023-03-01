@@ -47,7 +47,11 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
               highlightColor: Colors.transparent,
               icon: const Icon(Icons.settings),
               onPressed: () {
-                Navigator.of(context).pushNamed(configurationRoute);
+                Navigator.of(context).pushNamed(configurationRoute).then(
+                  (value) {
+                    setState(() {});
+                  },
+                );
               },
             )
           ],
