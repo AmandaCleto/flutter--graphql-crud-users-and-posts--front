@@ -84,6 +84,4 @@ mixin ConfigurationMixin {
 
     return result;
   }
-
-  editUser() async {}
 }

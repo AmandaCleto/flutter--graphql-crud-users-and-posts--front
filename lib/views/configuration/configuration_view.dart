@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/app/config/routes/constants.dart';
 import 'package:graphql_crud_users/data/models/authors/get_author_id.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
 import 'package:graphql_crud_users/shared/components/query_has_exception_widget.dart';
@@ -120,7 +121,21 @@ class _ConfigurationViewState extends State<ConfigurationView>
                             child: ItemWidget(
                               firstName: listAuthors![index].firstName,
                               lastName: listAuthors![index].lastName,
-                              editCallback: () async {},
+                              editCallback: () async {
+                                var result =
+                                    await Navigator.of(context).pushNamed(
+                                  configurationEditRoute,
+                                  arguments: ScreenArguments(
+                                    listAuthors![index].id,
+                                    listAuthors![index].firstName,
+                                    listAuthors![index].lastName,
+                                  ),
+                                );
+
+                                if (result == true) {
+                                  setState(() {});
+                                }
+                              },
                               deleteCallback: () async {
                                 bool result = await deleteAuthor(
                                   context,

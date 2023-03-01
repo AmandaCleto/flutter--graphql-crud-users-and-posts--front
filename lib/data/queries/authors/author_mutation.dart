@@ -30,4 +30,26 @@ class AuthorMutation {
 
     return query;
   }
+
+  static String updateAuthor({
+    required String firstName,
+    required String lastName,
+    required String authorId,
+  }) {
+    bool active = true;
+    String query = """
+    mutation {
+      updateUser(
+        id: "$authorId"
+        data: { firstName: "$firstName", lastName: "$lastName", active: $active }
+     ) {
+      _id
+      firstName
+      lastName
+    }
+   }
+    """;
+
+    return query;
+  }
 }

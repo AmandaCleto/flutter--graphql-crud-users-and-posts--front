@@ -43,10 +43,10 @@ class PostWritingMixin {
     required ValueNotifier<GraphQLClient> client,
   }) async {
     try {
-      String mutation = AuthorQuery.getAuthors;
+      String query = AuthorQuery.getAuthors;
 
       QueryResult result = await client.value.query(
-        QueryOptions(document: gql(mutation)),
+        QueryOptions(document: gql(query)),
       );
 
       if (result.hasException) {
