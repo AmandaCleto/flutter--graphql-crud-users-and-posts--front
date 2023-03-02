@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_crud_users/config/env.dart';
+import 'package:graphql_crud_users/app/config/env.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:graphql_crud_users/shared/hive/config_hive.dart';
 

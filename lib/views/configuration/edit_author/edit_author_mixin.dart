@@ -1,18 +1,24 @@
-import 'package:graphql_crud_users/data/queries/posts/post_mutation.dart';
+import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/data/queries/authors/author_mutation.dart';
 import 'package:graphql_crud_users/shared/exceptions/error_exception.dart';
 import 'package:graphql_crud_users/shared/messages/messages_enum.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:flutter/material.dart';
 
-mixin HomeMixin {
-  Future<bool> deletePost({
+mixin EditAuthorMixin {
+  Future<bool> editAuthor({
     required ValueNotifier<GraphQLClient> client,
-    required String postId,
+    required String firstName,
+    required String lastName,
+    required String authorId,
   }) async {
     try {
-      String mutation = PostMutation.deletePost(postId: postId);
+      String mutation = AuthorMutation.updateAuthor(
+        firstName: firstName,
+        lastName: lastName,
+        authorId: authorId,
+      );
 
-      var result = await client.value.mutate(
+      QueryResult result = await client.value.mutate(
         MutationOptions(document: gql(mutation)),
       );
 
@@ -21,7 +27,7 @@ mixin HomeMixin {
       } else {
         throw ErrorException(EMessages.errorGeneric.message).cause;
       }
-    } on ErrorException catch (_) {
+    } catch (_) {
       rethrow;
     }
   }

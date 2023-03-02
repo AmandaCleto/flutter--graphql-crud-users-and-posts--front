@@ -21,7 +21,7 @@ class ConfigHive {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Atenção'),
+            title: const Text('Attention'),
             content: Text(EMessages.errorHive.message),
           );
         },
