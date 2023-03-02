@@ -6,17 +6,28 @@ import 'package:graphql_crud_users/shared/themes/font_sizes.dart';
 import 'package:graphql_crud_users/shared/themes/gradient_decoration.dart';
 
 class AlertDialogWidget extends StatelessWidget {
-  final String title, content, confirmationButtonText, denialButtonText;
+  final String title, content;
+  final String? confirmationButtonText, denialButtonText;
   final Future<void> Function()? confirmationFn;
+  final bool _errorDialog;
 
   const AlertDialogWidget({
-    Key? key,
+    super.key,
     this.confirmationFn,
     required this.title,
     required this.content,
     required this.denialButtonText,
     required this.confirmationButtonText,
-  }) : super(key: key);
+  }) : _errorDialog = false;
+
+  const AlertDialogWidget.error({
+    super.key,
+    required this.title,
+    required this.content,
+  })  : _errorDialog = true,
+        denialButtonText = null,
+        confirmationButtonText = null,
+        confirmationFn = null;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +76,7 @@ class AlertDialogWidget extends StatelessWidget {
                   overlayColor: MaterialStateProperty.all(Colors.transparent),
                 ),
                 child: Text(
-                  denialButtonText,
+                  denialButtonText == null ? "Ok" : denialButtonText!,
                   style: const TextStyle(
                     fontSize: FontSizesTheme.bodyText,
                     color: ColorsTheme.blue,
@@ -73,36 +84,35 @@ class AlertDialogWidget extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              width: context.percentWidth(0.30),
-              height: 60.0,
-              child: ElevatedButton(
-                onPressed: confirmationFn == null
-                    ? () => Navigator.of(context).pop(true)
-                    : () async {
-                        final navigator = Navigator.of(context);
-
-                        await confirmationFn!();
-
-                        navigator.pop(true);
-                      },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
+            Visibility(
+              visible: !_errorDialog,
+              child: SizedBox(
+                width: context.percentWidth(0.30),
+                height: 60.0,
+                child: ElevatedButton(
+                  onPressed: confirmationFn == null
+                      ? () => Navigator.of(context).pop(true)
+                      : () async {
+                          await confirmationFn!();
+                        },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0),
+                    ),
+                    padding: const EdgeInsets.all(0.0),
                   ),
-                  padding: const EdgeInsets.all(0.0),
-                ),
-                child: Ink(
-                  decoration: const BoxDecoration(
-                    gradient: GradientDecoration.bluePinkGradient,
-                    borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                  ),
-                  child: Center(
-                    child: Text(
-                      confirmationButtonText,
-                      style: const TextStyle(
-                        fontSize: FontSizesTheme.bodyText,
-                        color: ColorsTheme.blue,
+                  child: Ink(
+                    decoration: const BoxDecoration(
+                      gradient: GradientDecoration.bluePinkGradient,
+                      borderRadius: BorderRadius.all(Radius.circular(80.0)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        confirmationButtonText ?? "Sim",
+                        style: const TextStyle(
+                          fontSize: FontSizesTheme.bodyText,
+                          color: ColorsTheme.blue,
+                        ),
                       ),
                     ),
                   ),

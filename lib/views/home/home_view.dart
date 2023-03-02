@@ -1,10 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/app/config/routes/constants.dart';
-
 import 'package:graphql_crud_users/data/models/authors/get_authors_posts.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
+import 'package:graphql_crud_users/shared/components/alert_dialog_widget.dart';
 import 'package:graphql_crud_users/shared/components/button_gradient_widget.dart';
 import 'package:graphql_crud_users/shared/components/query_has_exception_widget.dart';
 import 'package:graphql_crud_users/shared/layouts/query_refresh_layout.dart';
@@ -32,6 +30,8 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
 
   @override
   Widget build(BuildContext context) {
+    var navigator = Navigator.of(context);
+    var scaffoldMessenger = ScaffoldMessenger.of(context);
     var client = context.read<ValueNotifier<GraphQLClient>?>();
 
     return GraphQLProvider(
@@ -148,12 +148,36 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
                             author: usersPosts![index].authorFullName,
                             postId: usersPosts![index].postId,
                             callbackFn: () async {
-                              await deletePost(
-                                client: client!,
-                                postId: usersPosts![index].postId,
-                              );
-                              await Future.delayed(const Duration(seconds: 2));
-                              refetch!();
+                              try {
+                                var result = await deletePost(
+                                  client: client!,
+                                  postId: usersPosts![index].postId,
+                                );
+
+                                if (result) {
+                                  scaffoldMessenger.showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Post has been successfully deleted!',
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  navigator.pop();
+                                  refetch!();
+                                }
+                              } catch (error) {
+                                navigator.pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext _) {
+                                    return AlertDialogWidget.error(
+                                      title: 'Attention!',
+                                      content: error.toString(),
+                                    );
+                                  },
+                                );
+                              }
                             },
                           ),
                         ),

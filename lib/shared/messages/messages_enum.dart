@@ -1,6 +1,9 @@
 enum EMessages {
   errorHive(
-    'Algo deu errado ao inicializar. Por favor, tente novamente mais tarde',
+    'Something went wrong at the initialization! Please try it again later.',
+  ),
+  errorGeneric(
+    'Something went wrong! Please try it again later.',
   );
 
   const EMessages(this.message);

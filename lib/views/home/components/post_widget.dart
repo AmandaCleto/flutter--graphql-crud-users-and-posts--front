@@ -35,23 +35,18 @@ class _PostWidgetState extends State<PostWidget> {
 
     return Dismissible(
       key: Key(widget.postId),
-      onDismissed: (direction) {
-        widget.callbackFn();
-
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Post has been successfully deleted!'),
-          duration: Duration(seconds: 2),
-        ));
-      },
       confirmDismiss: (DismissDirection direction) async {
         return await showDialog(
           context: context,
           builder: (BuildContext context) {
-            return const AlertDialogWidget(
+            return AlertDialogWidget(
               title: 'Are you sure?',
               content: 'By deleting this post, you cannot undo this action.',
               confirmationButtonText: "I'm sure!",
               denialButtonText: "No",
+              confirmationFn: () async {
+                await widget.callbackFn();
+              },
             );
           },
         );
