@@ -10,64 +10,50 @@ import 'package:graphql_crud_users/shared/messages/messages_enum.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class PostWritingMixin {
-  Future<String> createAuthor({
+  Future<String> _createAuthor({
     required ValueNotifier<GraphQLClient> client,
     required String firstName,
     required String lastName,
   }) async {
-    try {
-      String mutation =
-          AuthorMutation.createUser(firstName: firstName, lastName: lastName);
+    String mutation = AuthorMutation.createUser(
+      firstName: firstName,
+      lastName: lastName,
+    );
 
-      QueryResult result = await client.value.mutate(
-        MutationOptions(document: gql(mutation)),
-      );
+    QueryResult result = await client.value.mutate(
+      MutationOptions(document: gql(mutation)),
+    );
 
-      if (result.hasException) {
-        inspect(result.exception?.graphqlErrors[0].message);
+    if (result.data != null) {
+      String authorId = result.data!["createUser"]['_id'];
 
-        throw '';
-      } else {
-        if (result.data != null) {
-          String authorId = result.data!["createUser"]['_id'];
-
-          return authorId;
-        } else {
-          throw '';
-        }
-      }
-    } catch (e) {
-      throw '';
+      return authorId;
+    } else {
+      return "";
     }
   }
 
   Future<List<GetAuthors?>> getAuthors({
     required ValueNotifier<GraphQLClient> client,
   }) async {
-    try {
-      String query = AuthorQuery.getAuthors;
+    String query = AuthorQuery.getAuthors;
 
-      QueryResult result = await client.value.query(
-        QueryOptions(document: gql(query)),
-      );
+    QueryResult result = await client.value.query(
+      QueryOptions(document: gql(query)),
+    );
 
-      if (result.hasException) {
-        inspect(result.exception?.graphqlErrors[0].message);
+    if (result.data != null) {
+      var rawList = List.of(result.data!["users"]);
 
-        throw '';
-      } else {
-        if (result.data != null) {
-          var rawList = List.of(result.data!["users"]);
+      List<GetAuthors> listAuthors = rawList
+          .map(
+            (jsonChat) => GetAuthors.fromJson(jsonChat),
+          )
+          .toList();
 
-          List<GetAuthors> listAuthors =
-              rawList.map((jsonChat) => GetAuthors.fromJson(jsonChat)).toList();
-          return listAuthors;
-        } else {
-          return [];
-        }
-      }
-    } catch (e) {
-      throw '';
+      return listAuthors;
+    } else {
+      return [];
     }
   }
 
@@ -76,22 +62,36 @@ class PostWritingMixin {
     required String authorId,
     required String title,
     required String content,
+    required String firstName,
+    required String lastName,
   }) async {
     try {
-      String user = PostMutation.createPost(
-        authorId: authorId,
-        content: content,
-        title: title,
-      );
+      String localAuthorId = authorId;
 
-      QueryResult result = await client.value.mutate(
-        MutationOptions(
-          document: gql(user),
-        ),
-      );
+      if (localAuthorId.isEmpty) {
+        localAuthorId = await _createAuthor(
+          client: client,
+          firstName: firstName,
+          lastName: lastName,
+        );
+      }
 
-      if (result.data != null) {
-        return true;
+      if (localAuthorId.isNotEmpty) {
+        String user = PostMutation.createPost(
+          authorId: localAuthorId,
+          content: content,
+          title: title,
+        );
+
+        QueryResult result = await client.value.mutate(
+          MutationOptions(document: gql(user)),
+        );
+
+        if (result.data != null) {
+          return true;
+        } else {
+          throw ErrorException(EMessages.errorGeneric.message).cause;
+        }
       } else {
         throw ErrorException(EMessages.errorGeneric.message).cause;
       }

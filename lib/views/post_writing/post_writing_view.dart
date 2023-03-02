@@ -138,23 +138,14 @@ class _PostWritingViewState extends State<PostWritingView>
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     var client = context.read<ValueNotifier<GraphQLClient>?>()!;
-                    String authorId;
-
-                    if (_postWritingController.value.isEmpty) {
-                      authorId = await createAuthor(
-                        client: client,
-                        firstName: firstNameTitleTE.text,
-                        lastName: lastNameTitleTE.text,
-                      );
-                    } else {
-                      authorId = _postWritingController.value;
-                    }
 
                     await createPost(
                       client: client,
                       title: postTitleTE.text,
                       content: contentTitleTE.text,
-                      authorId: authorId,
+                      authorId: _postWritingController.value,
+                      firstName: firstNameTitleTE.text,
+                      lastName: lastNameTitleTE.text,
                     )
                         .then(
                       (value) => Navigator.pop(context, value),
