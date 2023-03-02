@@ -13,7 +13,7 @@
 <br>
 
 ## 📷 Illustrative image of the Figma:
-![](https://amandacleto.github.io/images-for-projects/public/images/github-readme\graphql-users-posts\graphql-figma.png)
+![](https://amandacleto.github.io/images-for-projects/public/images/github-readme/graphql-users-posts/graphql-figma.png)
 
 
 <br>
