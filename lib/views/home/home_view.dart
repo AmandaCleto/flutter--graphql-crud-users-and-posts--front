@@ -115,7 +115,7 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
                           .pushNamed(postWritingRoute);
 
                       if (result == true) {
-                        refetch!();
+                        setState(() {});
                       }
                     },
                     text: 'write post',
@@ -210,13 +210,14 @@ class _HomeViewState extends State<HomeView> with HomeMixin, RefreshPageMixin {
                   hoverElevation: 0,
                   elevation: 0,
                   onPressed: () async {
-                    await Navigator.of(context)
-                        .pushNamed(postWritingRoute)
-                        .then((value) {
-                      if (value == true) {
+                    var a =
+                        await Navigator.of(context).pushNamed(postWritingRoute);
+
+                    if (a == true) {
+                      await Future.delayed(Duration(seconds: 1)).then((value) {
                         setState(() {});
-                      }
-                    });
+                      });
+                    }
                   },
                   icon: const Icon(
                     Icons.border_color_rounded,

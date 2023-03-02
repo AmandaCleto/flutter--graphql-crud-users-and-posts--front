@@ -148,7 +148,7 @@ class _PostWritingViewState extends State<PostWritingView>
                       lastName: lastNameTitleTE.text,
                     )
                         .then(
-                      (value) => Navigator.pop(context, value),
+                      (value) => Navigator.pop(context, true),
                     )
                         .catchError(
                       (onError) {
