@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:graphql_crud_users/shared/components/alert_dialog_widget.dart';
 import 'package:graphql_crud_users/shared/components/button_gradient_widget.dart';
 import 'package:graphql_crud_users/shared/components/text_input_widget.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
@@ -101,7 +102,23 @@ class _EditAuthorViewState extends State<EditAuthorView> with EditAuthorMixin {
                         client: client,
                         firstName: firstNameTE.text,
                         lastName: lastNameTE.text,
-                      ).then((value) => Navigator.pop(context, value));
+                      )
+                          .then(
+                        (value) => Navigator.pop(context, value),
+                      )
+                          .catchError(
+                        (onError) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext _) {
+                              return AlertDialogWidget.error(
+                                title: 'Attention!',
+                                content: onError.toString(),
+                              );
+                            },
+                          );
+                        },
+                      );
                     }
                   },
                   text: 'Update',

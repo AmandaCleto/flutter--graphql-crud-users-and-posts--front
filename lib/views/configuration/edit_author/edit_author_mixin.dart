@@ -1,12 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_mutation.dart';
-import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
+import 'package:graphql_crud_users/shared/exceptions/error_exception.dart';
+import 'package:graphql_crud_users/shared/messages/messages_enum.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 mixin EditAuthorMixin {
-  editAuthor({
+  Future<bool> editAuthor({
     required ValueNotifier<GraphQLClient> client,
     required String firstName,
     required String lastName,
@@ -18,26 +17,18 @@ mixin EditAuthorMixin {
         lastName: lastName,
         authorId: authorId,
       );
-      print('object');
+
       QueryResult result = await client.value.mutate(
         MutationOptions(document: gql(mutation)),
       );
 
-      if (result.hasException) {
-        throw '';
+      if (result.data != null) {
+        return true;
       } else {
-        if (result.data != null) {
-          var rawList = result.data!["updateUser"];
-
-          inspect(rawList);
-
-          return true;
-        } else {
-          return false;
-        }
+        throw ErrorException(EMessages.errorGeneric.message).cause;
       }
-    } catch (e) {
-      throw '';
+    } catch (_) {
+      rethrow;
     }
   }
 }
