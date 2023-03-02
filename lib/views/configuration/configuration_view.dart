@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/app/config/routes/constants.dart';
 import 'package:graphql_crud_users/data/models/authors/get_author_id.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
+import 'package:graphql_crud_users/shared/components/alert_dialog_widget.dart';
 import 'package:graphql_crud_users/shared/components/query_has_exception_widget.dart';
 import 'package:graphql_crud_users/shared/layouts/query_refresh_layout.dart';
 import 'package:graphql_crud_users/shared/extensions/size_extension.dart';
+import 'package:graphql_crud_users/shared/messages/messages_enum.dart';
 import 'package:graphql_crud_users/shared/themes/colors.dart';
 import 'package:graphql_crud_users/shared/themes/font_sizes.dart';
 import 'package:graphql_crud_users/views/configuration/components/item_widget.dart';
@@ -137,7 +139,7 @@ class _ConfigurationViewState extends State<ConfigurationView>
                                 }
                               },
                               deleteCallback: () async {
-                                bool result = await deleteAuthor(
+                                bool? result = await deleteAuthor(
                                   context,
                                   client: client!,
                                   authorId: listAuthors![index].id,
@@ -145,7 +147,7 @@ class _ConfigurationViewState extends State<ConfigurationView>
                                       "${listAuthors![index].firstName} ${listAuthors![index].lastName}",
                                 );
 
-                                if (result) {
+                                if (result == true) {
                                   refetch!();
                                 }
                               },

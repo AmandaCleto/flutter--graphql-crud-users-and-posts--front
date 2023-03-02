@@ -1,34 +1,28 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_mutation.dart';
 import 'package:graphql_crud_users/data/queries/posts/post_mutation.dart';
+import 'package:graphql_crud_users/shared/messages/messages_enum.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../shared/components/alert_dialog_widget.dart';
 
 mixin ConfigurationMixin {
-  _deleteAllPostsFromAuthorId({
+  Future<bool> _deleteAllPostsFromAuthorId({
     required ValueNotifier<GraphQLClient> client,
     required String authorId,
   }) async {
-    try {
-      String mutation =
-          PostMutation.deleteAllPostsFromAuthorId(authorId: authorId);
+    String mutation = PostMutation.deleteAllPostsFromAuthorId(
+      authorId: authorId,
+    );
 
-      QueryResult result = await client.value.mutate(
-        MutationOptions(document: gql(mutation)),
-      );
+    QueryResult result = await client.value.mutate(
+      MutationOptions(document: gql(mutation)),
+    );
 
-      if (result.hasException) {
-        inspect(result.exception?.graphqlErrors[0].message);
-      } else if (result.data != null) {
-        inspect(result.data!["deleteAllPostFromUserId"]);
-      }
-
-      // return "";
-    } catch (e) {
-      // return "";
+    if (result.data != null) {
+      return Future.value(true);
+    } else {
+      return Future.value(false);
     }
   }
 
@@ -36,35 +30,32 @@ mixin ConfigurationMixin {
     required ValueNotifier<GraphQLClient> client,
     required String authorId,
   }) async {
-    try {
-      String mutation = AuthorMutation.deleteAuthor(authorId: authorId);
+    String mutation = AuthorMutation.deleteAuthor(authorId: authorId);
 
-      QueryResult result = await client.value.mutate(
-        MutationOptions(document: gql(mutation)),
-      );
+    QueryResult result = await client.value.mutate(
+      MutationOptions(document: gql(mutation)),
+    );
 
-      await _deleteAllPostsFromAuthorId(client: client, authorId: authorId);
+    bool hasDeleted = await _deleteAllPostsFromAuthorId(
+      client: client,
+      authorId: authorId,
+    );
 
-      if (result.hasException) {
-        inspect(result.exception?.graphqlErrors[0].message);
-        return false;
-      } else if (result.data != null) {
-        return true;
-      }
-
-      return false;
-    } catch (e) {
+    if (result.data != null && hasDeleted) {
+      return true;
+    } else {
       return false;
     }
   }
 
-  Future<bool> deleteAuthor(
+  Future<bool?> deleteAuthor(
     context, {
     required ValueNotifier<GraphQLClient> client,
     required String authorId,
     required String fullName,
   }) async {
-    bool result = false;
+    bool? result;
+    var navigator = Navigator.of(context);
 
     await showDialog(
       context: context,
@@ -77,10 +68,23 @@ mixin ConfigurationMixin {
           denialButtonText: "No",
           confirmationFn: () async {
             result = await _deleteAuthor(client: client, authorId: authorId);
+            navigator.pop();
           },
         );
       },
     );
+
+    if (result == false) {
+      showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialogWidget.error(
+            title: 'Attention!',
+            content: EMessages.errorGeneric.message,
+          );
+        },
+      );
+    }
 
     return result;
   }
