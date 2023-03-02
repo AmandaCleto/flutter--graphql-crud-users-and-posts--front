@@ -5,6 +5,8 @@ import 'package:graphql_crud_users/data/models/authors/get_authors.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_mutation.dart';
 import 'package:graphql_crud_users/data/queries/authors/author_query.dart';
 import 'package:graphql_crud_users/data/queries/posts/post_mutation.dart';
+import 'package:graphql_crud_users/shared/exceptions/error_exception.dart';
+import 'package:graphql_crud_users/shared/messages/messages_enum.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class PostWritingMixin {
@@ -69,7 +71,7 @@ class PostWritingMixin {
     }
   }
 
-  Future<void> createPost({
+  Future<bool> createPost({
     required ValueNotifier<GraphQLClient> client,
     required String authorId,
     required String title,
@@ -88,11 +90,13 @@ class PostWritingMixin {
         ),
       );
 
-      if (result.hasException) {
-        inspect(result.exception?.graphqlErrors[0].message);
+      if (result.data != null) {
+        return true;
+      } else {
+        throw ErrorException(EMessages.errorGeneric.message).cause;
       }
-    } catch (e) {
-      inspect(e);
+    } on ErrorException catch (_) {
+      rethrow;
     }
   }
 }
