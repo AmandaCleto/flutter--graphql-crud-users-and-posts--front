@@ -7,13 +7,13 @@
 <br>
 
 ## 📷 Illustrative gifs of the project:
-![](https://amandacleto.github.io/images-for-projects/public/images/github-readme\graphql-users-posts\graphql-users-posts-part1.gif)
-![](https://amandacleto.github.io/images-for-projects/public/images/github-readme\graphql-users-posts\graphql-users-posts-part2.gif)
+![](https://amandacleto.github.io/images-for-projects/public/images/github-readme/graphql-users-posts/graphql-users-posts-part1.gif)
+![](https://amandacleto.github.io/images-for-projects/public/images/github-readme/graphql-users-posts/graphql-users-posts-part2.gif)
 
 <br>
 
 ## 📷 Illustrative image of the Figma:
-![](https://amandacleto.github.io/images-for-projects/public/images/github-readme\graphql-users-posts\graphql-figma.png)
+![](https://amandacleto.github.io/images-for-projects/public/images/github-readme/graphql-users-posts/graphql-figma.png)
 
 
 <br>
